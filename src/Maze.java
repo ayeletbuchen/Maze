@@ -11,21 +11,26 @@ public class Maze extends JPanel {
     private Random random;
 
     public Maze() {
-        setLayout(new GridLayout(IMaze.CELLS_PER_ROW, IMaze.CELLS_PER_ROW));
+        setLayout(new GridLayout(IMaze.CELLS_PER_ROW, IMaze.CELLS_PER_ROW, 0, 0));
         setBackground(Color.WHITE);
         setSize(IMaze.MAZE_SIZE, IMaze.MAZE_SIZE);
 
         maze = new Cell[IMaze.CELLS_PER_ROW][IMaze.CELLS_PER_ROW];
         random = new Random();
+
+        initializeCells();
+        maze[0][0].removeLeftBorder();
+        eraseWalls(0, 0);
+        maze[IMaze.CELLS_PER_ROW - 1][IMaze.CELLS_PER_ROW - 1].removeRightBorder();
+    }
+
+    private void initializeCells() {
         for (int row = 0; row < IMaze.CELLS_PER_ROW; row++) {
             for (int col = 0; col < IMaze.CELLS_PER_ROW; col++) {
                 maze[row][col] = new Cell();
                 add(maze[row][col]);
             }
         }
-        maze[0][0].removeLeftBorder();
-        eraseWalls(0, 0);
-        maze[IMaze.CELLS_PER_ROW - 1][IMaze.CELLS_PER_ROW - 1].removeRightBorder();
     }
 
     private void eraseWalls(int row, int col) {
