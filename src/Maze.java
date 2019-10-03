@@ -123,6 +123,7 @@ public class Maze extends JPanel {
         } else {
             maze[startRow][startCol].removeTopBorder();
         }
+        maze[startRow][startCol].setBackground(Color.GREEN);
     }
 
     private void removeEndWall() {
@@ -131,5 +132,6 @@ public class Maze extends JPanel {
         } else {
             maze[endRow][endCol].removeBottomBorder();
         }
+        maze[endRow][endCol].setBackground(Color.RED);
     }
 }

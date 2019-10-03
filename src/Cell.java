@@ -1,7 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class Cell extends JComponent {
+public class Cell extends JPanel {
     private boolean visited = false;
     private int topBorder = 1;
     private int bottomBorder = 1;
@@ -9,6 +9,7 @@ public class Cell extends JComponent {
     private int rightBorder = 1;
 
     public Cell() {
+        setBackground(Color.WHITE);
         setBorders();
     }
 
