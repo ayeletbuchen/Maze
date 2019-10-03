@@ -41,7 +41,7 @@ public class Maze extends JPanel {
         if (!maze[row][col].isVisited()) {
             maze[row][col].setVisited();
             ArrayList<Integer> neighbors = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
-            Collections.shuffle(neighbors);
+
             while (!neighbors.isEmpty()) {
                 int rand = random.nextInt(neighbors.size());
                 int direction = neighbors.get(rand);
