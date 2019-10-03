@@ -9,9 +9,13 @@ public class Maze extends JPanel {
 
     private Cell[][] maze;
     private Random random;
+    private int startRow;
+    private int startCol;
+    private int endRow;
+    private int endCol;
 
     public Maze() {
-        setLayout(new GridLayout(IMaze.CELLS_PER_ROW, IMaze.CELLS_PER_ROW, 0, 0));
+        setLayout(new GridLayout(IMaze.CELLS_PER_ROW, IMaze.CELLS_PER_ROW));
         setBackground(Color.WHITE);
         setSize(IMaze.MAZE_SIZE, IMaze.MAZE_SIZE);
 
@@ -19,9 +23,9 @@ public class Maze extends JPanel {
         random = new Random();
 
         initializeCells();
-        maze[0][0].removeLeftBorder();
         eraseWalls(0, 0);
-        maze[IMaze.CELLS_PER_ROW - 1][IMaze.CELLS_PER_ROW - 1].removeRightBorder();
+        setStartCell();
+        setEndCell();
     }
 
     private void initializeCells() {
@@ -83,6 +87,50 @@ public class Maze extends JPanel {
         if (!leftCell.isVisited() || !rightCell.isVisited()) {
             leftCell.removeRightBorder();
             rightCell.removeLeftBorder();
+        }
+    }
+
+    private void setStartCell() {
+        startRow = random.nextInt(IMaze.CELLS_PER_ROW);
+
+        if (startRow == 0 || startRow == IMaze.CELLS_PER_ROW - 1) {
+            startCol = random.nextInt(IMaze.CELLS_PER_ROW);
+        } else {
+            startCol = 0;
+        }
+
+        removeStartWall();
+    }
+
+    private void setEndCell() {
+        do {
+            endRow = random.nextInt(IMaze.CELLS_PER_ROW);
+        } while (endRow == startRow);
+
+        if (endRow == 0 || endRow == IMaze.CELLS_PER_ROW - 1) {
+            do {
+                endCol = random.nextInt(IMaze.CELLS_PER_ROW - 1);
+            } while (endCol == startCol);
+        } else {
+            endCol = IMaze.CELLS_PER_ROW - 1;
+        }
+
+        removeEndWall();
+    }
+
+    private void removeStartWall() {
+        if (startCol == 0) {
+            maze[startRow][startCol].removeLeftBorder();
+        } else {
+            maze[startRow][startCol].removeTopBorder();
+        }
+    }
+
+    private void removeEndWall() {
+        if (endCol == IMaze.CELLS_PER_ROW - 1) {
+            maze[endRow][endCol].removeRightBorder();
+        } else {
+            maze[endRow][endCol].removeBottomBorder();
         }
     }
 }
