@@ -91,12 +91,7 @@ public class Maze extends JPanel {
 
     private void setStartCell() {
         startRow = random.nextInt(IMaze.CELLS_PER_ROW);
-
-        if (startRow == 0 || startRow == IMaze.CELLS_PER_ROW - 1) {
-            startCol = random.nextInt(IMaze.CELLS_PER_ROW);
-        } else {
-            startCol = 0;
-        }
+        startCol = (startRow == 0 || startRow == IMaze.CELLS_PER_ROW - 1) ? random.nextInt(IMaze.CELLS_PER_ROW) : 0;
 
         removeStartWall();
     }
