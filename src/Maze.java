@@ -1,8 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
+import java.util.*;
+import java.util.List;
 
 public class Maze extends JPanel {
 
@@ -25,12 +24,14 @@ public class Maze extends JPanel {
         eraseWalls(0, 0);
         setStartCell();
         setEndCell();
+        // breadthFirstSearch();
+        depthFirstSearch();
     }
 
     private void initializeCells() {
         for (int row = 0; row < IMaze.CELLS_PER_ROW; row++) {
             for (int col = 0; col < IMaze.CELLS_PER_ROW; col++) {
-                maze[row][col] = new Cell();
+                maze[row][col] = new Cell(row, col);
                 add(maze[row][col]);
             }
         }
@@ -118,7 +119,7 @@ public class Maze extends JPanel {
         } else {
             maze[startRow][startCol].removeTopBorder();
         }
-        maze[startRow][startCol].setBackground(Color.GREEN);
+        maze[startRow][startCol].setColor(Color.GREEN);
     }
 
     private void removeEndWall() {
@@ -127,6 +128,88 @@ public class Maze extends JPanel {
         } else {
             maze[endRow][endCol].removeBottomBorder();
         }
-        maze[endRow][endCol].setBackground(Color.RED);
+        maze[endRow][endCol].setColor(Color.RED);
+    }
+
+    public List<Cell> breadthFirstSearch() {
+        LinkedList<Cell> queue = new LinkedList<>();
+        LinkedList<Cell> path = new LinkedList<>();
+        queue.add(maze[startRow][startCol]);
+        breadthFirstSearch(queue, new HashSet<>(), path);
+        return path;
+    }
+
+    public List<Cell> depthFirstSearch() {
+        LinkedList<Cell> path = new LinkedList<>();
+        depthFirstSearch(maze[startRow][startCol], new HashSet<>(), path);
+        return path;
+    }
+
+    private boolean depthFirstSearch(Cell cell, HashSet<Cell> visited, LinkedList<Cell> path) {
+        if (!visited.contains(cell)) {
+            visited.add(cell);
+            if (cell == maze[endRow][endCol]) {
+                path.add(cell);
+                return true;
+            }
+            boolean onPath = false;
+            if (cell.isOpenOnTop() && depthFirstSearch(maze[cell.row - 1][cell.col], visited, path)) {
+                onPath = true;
+            }
+            else if (cell.isOpenOnBottom() && depthFirstSearch(maze[cell.row + 1][cell.col], visited, path)) {
+                onPath = true;
+            }
+            else if (cell.isOpenOnLeft() && depthFirstSearch(maze[cell.row][cell.col - 1], visited, path)) {
+                onPath = true;
+            }
+            else if (cell.isOpenOnRight() && depthFirstSearch(maze[cell.row][cell.col + 1], visited, path)) {
+                onPath = true;
+            }
+            if (onPath) {
+                if (cell != maze[startRow][startCol]) {
+                    cell.setBackground(Color.YELLOW);
+                }
+                path.addFirst(cell);
+            }
+            return onPath;
+        }
+        return false;
+    }
+
+    private void breadthFirstSearch(LinkedList<Cell> queue, HashSet<Cell> visited, LinkedList<Cell> path) {
+        while (!queue.isEmpty()) {
+            Cell cell = queue.pollFirst();
+            if (!visited.contains(cell) || cell != maze[startRow][startCol] || cell.openNeighbors() > 1) {
+                visited.add(cell);
+
+                if (cell == maze[endRow][endCol]) {
+                    while(cell != maze[startRow][startCol]) {
+                        cell.setBackground(Color.YELLOW);
+                        path.addFirst(cell);
+                        cell = cell.parent;
+                    }
+                    maze[endRow][endCol].resetBackground();
+                    path.addFirst(maze[startRow][startCol]);
+                    return;
+                }
+
+                if (cell.isOpenOnTop() && !visited.contains(maze[cell.row - 1][cell.col])) {
+                    maze[cell.row - 1][cell.col].setParent(cell);
+                    queue.add(maze[cell.row - 1][cell.col]);
+                }
+                if (cell.isOpenOnBottom() && !visited.contains(maze[cell.row + 1][cell.col])) {
+                    maze[cell.row + 1][cell.col].setParent(cell);
+                    queue.add(maze[cell.row + 1][cell.col]);
+                }
+                if (cell.isOpenOnLeft() && !visited.contains(maze[cell.row][cell.col - 1])) {
+                    maze[cell.row][cell.col - 1].setParent(cell);
+                    queue.add(maze[cell.row][cell.col - 1]);
+                }
+                if (cell.isOpenOnRight() && !visited.contains(maze[cell.row][cell.col + 1])) {
+                    maze[cell.row][cell.col + 1].setParent(cell);
+                    queue.add(maze[cell.row][cell.col + 1]);
+                }
+            }
+        }
     }
 }
